@@ -9321,7 +9321,7 @@ ALARP A method to reduce risk to levels As Low As Reasonably Possible .
 In the SOIM context , an alert should refer to an event , or group of events , of interest from a security perspective , representing either an attack symptom or consequence .
 An alert is necessarily the outcome of an analysis process performed by an Intrusion Detection System sensor on event traces .
 anonymity The state of being not identiﬁable within a set of subjects , the anonymity set .
-817 The Cyber Security Body Of Knowledge www.cybok.org appiﬁcation The replacement of websites with applications that run on mobile devices.. ASIC Application Speciﬁc Integrated Circuit is one class on integrated circuits , where the circuit is tuned to a speciﬁc application or set of applications .
+817 The Cyber Security Body Of Knowledge www.cybok.org appiﬁcation The replacement of websites with applications that run on mobile devices .. ASIC Application Speciﬁc Integrated Circuit is one class on integrated circuits , where the circuit is tuned to a speciﬁc application or set of applications .
 attack An attempt to gain unauthorised access to an Information System services , resources , or information , or an attempt to compromise system integrity .
 attack surface The set of entry points where an attacker can attempt unauthorised access .
 Security approaches endeavor to keep the attack surface as small as possible .
@@ -9332,7 +9332,7 @@ This is made possible by either being located in countries with lax cybercrime l
 card skimming the practice of installing devices on ATM that allow for the cloning of the cards that are being inserted .
 carving ( File/data content carving ) The process of recovering and reconstructing ﬁle content directly from block storage without using the ﬁlesystem metadata .
 More generally , data ( structure ) carving is the process of reconstructing logical objects ( such as ﬁles and database records ) from a bulk data capture ( disk/RAM image ) without using metadata that describes the location and layout of the artifacts .
-Data carvers use knowledge of the data formats to identify and validate the extracted content.. certiﬁcate a digitally signed data structure binding an entity ( called subject ) to some attribute .
+Data carvers use knowledge of the data formats to identify and validate the extracted content .. certiﬁcate a digitally signed data structure binding an entity ( called subject ) to some attribute .
 click fraud the practice of using malware to generate fake clicks on websites .
 CMOS Complementary Metal Oxide Semiconductor technology is the most popular silicon technology to make integrated circuits .
 It consitst of complementary PMOS and NMOS transistors .
@@ -9358,7 +9358,7 @@ cyberstalking the practice of using electronic means to stalk another person .
 CyBOK Refers to the Cyber Security Body of Knowledge .
 delegation the act of granting access rights one holds to another principal .
 Denial of Service The prevention of authorised access to resources or the delaying of time-critical operations .
-digital ( forensic ) trace An explicit , or implicit , record that testiﬁes to the execution of speciﬁc computations , or the communication and/or storage of speciﬁc data.. digital forensics The process of identifying and reconstructing the relevant sequence of events that have led to the currently observable state of a target IT system or ( digital ) artifacts .
+digital ( forensic ) trace An explicit , or implicit , record that testiﬁes to the execution of speciﬁc computations , or the communication and/or storage of speciﬁc data .. digital forensics The process of identifying and reconstructing the relevant sequence of events that have led to the currently observable state of a target IT system or ( digital ) artifacts .
 Distributed Denial of Service A Denial of Service technique that uses numerous hosts to perform the attack .
 doxing an attack where the victim ’ s private information is publicly released online .
 DRAM DRAM is Dynamic Random Access Memory .
@@ -9461,17 +9461,17 @@ This is the case for electric power control , although the electric power genera
 token a data structure encoding the result of an access decision .
 trace Ordered set of events , generally of the same type , gathered in a container for easy sequential access .
 The order is not necessarily chronological , but is ﬁxed at the time of writing the trace .
-triage Triage is a partial forensic examination conducted under ( signiﬁcant ) time and resource constraints.. Glossary | October 2019 Page 827 The Cyber Security Body Of Knowledge www.cybok.org trojan A computer program that appears to have a useful function , but also has a hidden and potentially malicious function that evades security mechanisms , sometimes by exploiting legitimate authorizations of a system entity that invokes the program .
+triage Triage is a partial forensic examination conducted under ( signiﬁcant ) time and resource constraints .. Glossary | October 2019 Page 827 The Cyber Security Body Of Knowledge www.cybok.org trojan A computer program that appears to have a useful function , but also has a hidden and potentially malicious function that evades security mechanisms , sometimes by exploiting legitimate authorizations of a system entity that invokes the program .
 Trusted Computing Base The Trusted Computing Base ( TCB ) is the typical root of trust for a computer system .
 It contains all hardware and software components , that need to be trusted and of which the trustworthiness can not be explicitly veriﬁed .
 If security vulnerabilities occur in the TCB , then the security of the entire computer system might be at risk .
 Trusted Platform Module A Trusted Platform Module is a functional component that can perform cryptographic operations , manage keys , and provide remote attestation services .
-When implemented as a cryptographic co-processor and embedded on a personal computer platform , it provides roots of trust so that the platform can identify itself , its current conﬁguration , and running software.. unlinkability The property of two ( or more ) items in a system that ensures that these items are no more and no less related than they are related concerning the a-priori knowledge of the adversary .
+When implemented as a cryptographic co-processor and embedded on a personal computer platform , it provides roots of trust so that the platform can identify itself , its current conﬁguration , and running software .. unlinkability The property of two ( or more ) items in a system that ensures that these items are no more and no less related than they are related concerning the a-priori knowledge of the adversary .
 A virus can not run by itself ; it requires that its host program be run to make the virus active .
 VLSI Very Large Scale Integration is a collection of electronic design automation techniques to translate a HDL description into the actual polygons required for the maskmaking of an integrated circuit .
 The VLSI tools made it possible to manage the complexity of designing large integrated circuits .
 vulnerability Something open to attack or misuse that could lead to an undesirable outcome .
-webiﬁcation The process of using web technologies to display and transfer content on the web and mobile devices.. WiFi A family of radio technologies that is used for the wireless local area networking ( WLAN ) .
+webiﬁcation The process of using web technologies to display and transfer content on the web and mobile devices .. WiFi A family of radio technologies that is used for the wireless local area networking ( WLAN ) .
 worm A computer program that can run independently , can propagate a complete working version of itself onto other hosts on a network , and may consume computer resources destructively .
 YARA YARA is a tool primarily used in malware analysis .
 It describes malware families using textual or binary patterns .
