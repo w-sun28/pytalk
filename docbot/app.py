@@ -8,34 +8,13 @@ from waitress import serve
 
 # bot, covering content of given text file
 bots = {
-  "alice": None,
-  "bfr"	: None,
-  "heaven" : None,
-  "relativity" : None,
-  "cats"	: None,
-  "heli" :None,
-  "tesla" :None,
-  "const"	: None,
-  "hindenburg"	: None,
-  "covid"	: None,
-  "kafka"	: None,
-  "texas"	: None,
-  "ec2"	: None,
-  "logrank"	: None,
-  "toxi"	: None,
-  "einstein"	: None,
-  "peirce" : None,
-  "wasteland"	: None,
-  "geo"	: None,
-  "red"	: None,
-  "wolfram"	: None
 }
 
 UPLOAD_FOLDER = '/home/UNT/ws0163/Documents/pytalk/examples'
 ALLOWED_EXTENSIONS = {'pdf'}
 
 def activate_bot(name) :
-  if not bots[name]:
+  if name not in bots:
      bots[name] = Bot("../examples/"+name+".txt")
   return bots[name]
 
@@ -43,6 +22,16 @@ def activate_bot(name) :
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+# returns a list of bots based on files within /examples
+def findbots():
+  files = os.listdir('../examples')
+  clean = set()
+  for file in files:
+    name,suffix = os.path.splitext(file)
+    clean.add(name)
+  result = ", ".join(sorted(clean))
+  return result
 
 # the Flask-based Web app
 app = Flask(__name__,static_url_path='/static')
@@ -63,16 +52,19 @@ def get_bot_response():
     gets back answer and returns it to client
     '''
     userText = request.args.get('msg')
+    if userText == "bots?": 
+      return findbots() # list of bots
     if ':' not in userText:
       return 'Expected "document_name : query ?" as input'
     else :
         fname, query = userText.split(':')
         fname=fname.strip()
         query=query.strip()
-        try :
-          bot=activate_bot(fname)
-        except :
-          return "Sorry, no such document found."
+        #try :
+        bot=activate_bot(fname)
+        print(bot)
+        #except :
+          #return "Sorry, no such document found."
         if "summary" in query :
           return bot.summary
         if "keywords" in query:
@@ -100,6 +92,7 @@ def upload_file():
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             print(filename)
+            # creating new bot for uploaded file
             bot = Bot("../examples/" + filename)
             botname = filename[:-4]
             bots[botname] = bot
@@ -108,6 +101,7 @@ def upload_file():
             # return redirect(url_for('uploaded_file',filename=filename))
 
     return 0
+
 
 # method used once user is redirected from upload_file()
 @app.route('/uploads/<filename>')

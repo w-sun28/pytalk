@@ -13,14 +13,14 @@
          <!-- background-image:url('/static/home.jpg');
          background-size: cover; -->
       }
-      h1 {
+      #temp {
         background-color: blue;
         display: inline-block;
         font-size: 3em;
         margin: 0;
         padding: 14px;
       }
-      h3 {
+      #gitlink {
         color: black;
         font-size: 20px;
         margin-top: 3px;
@@ -91,46 +91,15 @@
     </style>
   </head>
   <body>
-
     <center>
-      <p>
-       <h2>Doctalk: Question Answering about Documents</h2>
-      </p>
-      <h4>
-      <p>
-          Type your query in the "Question?" box like in:
-          <h3>
-          <p> document_name : query ? </p>
-          </h3>
-          to chat about one of the following documents:
-          covid,
-          <a href = "https://plato.stanford.edu/entries/peirce/" target="_blank">peirce</a>,
-          <a href = "https://www.poemuseum.org/the-masque-of-the-red-death" target="_blank">red</a>,
-          <a href = "https://www.archives.gov/founding-docs/constitution-transcript" target="_blank">const</a>,
-          <a href = "https://www.tesla.com/sites/default/files/model_3_owners_manual_north_america_en.pdf" target="_blank">tesla</a>,
-          <a href = "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-ug.pdf" target="_blank">ec2</a>,
-          einstein,
-          <a href = "http://www.gutenberg.org/files/5001/5001-h/5001-h.htm" target="_blank">relativity</a>,
-          <a href = "https://www.faa.gov/regulations_policies/handbooks_manuals/aviation/media/faa-h-8083-4.pdf" target="_blank">heli</a>,
-          <a href = "https://blog.wolfram.com/2020/04/14/finally-we-may-have-a-path-to-the-fundamental-theory-of-physics-and-its-beautiful/" target="_blank">wolfram</a>,
-          <a href = "https://link.springer.com/chapter/10.1007/978-3-030-39197-3_1" target="_blank">logrank</a>,
-          geo,
-          <a href = "https://www.poetryfoundation.org/poems/47311/the-waste-land" target="_blank">wasteland</a>,
-          <a href = "https://www.theonion.com/heaven-less-opulent-than-vatican-reports-disappointed-1819567798" target="_blank">heaven</a>,
-          bfr,
-          <a href = "http://www.gutenberg.org/files/11/11-0.txt" target="_blank">alice</a>
-          hindenburg,
-          <a href = "https://www.google.com/books/edition/_/ZJVLCAAAQBAJ?hl=en" target="_blank">toxi</a>,
-          <a href = "http://www.gutenberg.org/ebooks/7849" target="_blank">kafka</a> .
-          The documents, covering multiple writing styles,
-          are from a dozen pages to more than 500, and it might take a few seconds to wake up the longer ones.
-       </p>
-       <p>
-       Type document_name : summary? or document_name : keywords? in the "Question?" box for seeing those.
-      </p>
-      </h4>
+      <h1>Doctalk: Question Answering about Documents</h1>
+      <h3>  
+        <p> To get started, upload a file (which may take time depending on the size) or type "bots?" to see a list of available documents bots. </p>
+        <p> Then, type "document_name : query ?" to get your question answered about the specified document. </p>
+        <p> Try "document_name : summary?" or "document_name : keywords?" if you aren't sure what to ask. </p>
+      </h3>
     </center>
-    <h3>
+    <h3 id="gitlink">
       <p>
         For  more, check out the home page of the
         <a href="https://github.com/ptarau/pytalk">DocTalk Dialog Agent</a>!
@@ -147,7 +116,7 @@
       <div>
         <div id="chatbox">
           <p class="botText">
-            <span> Hello! </span>
+            <span> Hello! Type "bots?" to see a list of available document bots. </span>
           </p>
         </div>
         <div id="userInput">
