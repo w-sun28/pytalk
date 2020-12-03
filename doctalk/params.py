@@ -10,6 +10,8 @@ class talk_params:
     self.force = False # if True, forces erasure of pre-parsed .json files
     #self.chunk_size=2^15 # splits large dcouments into chunks to avoid parser overflows TODO
 
+    self.ranker='hits' # picks centrality algorithm
+
     # content extraction related
     self.compounds = True # aggregates compounds
     self.svo_edges = True # includes SVO edges in text graph
@@ -86,6 +88,11 @@ class talk_params:
     for x,y in self.__dict__.items():
       print(x,'=',y)
 
+def ropen(f) :
+  return open(f,'r',encoding='utf8')
+
+def wopen(g) :
+  return open(g,'w',encoding='utf8')
 
 def ppp(*args) :
   if trace<0 : return

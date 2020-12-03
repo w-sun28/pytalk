@@ -39,8 +39,8 @@ def lexs_of(sentence):
 
 def to_json(infile,outfile):
   client = NLPclient()
-  with open(infile,'r') as f : text=f.read()
-  with open(outfile, 'w') as g:
+  with ropen(infile) as f : text=f.read()
+  with wopen(outfile) as g:
     xs=[x for x in client.extract(text)]
     json.dump(xs,g,indent=2)
 
@@ -58,7 +58,7 @@ def cleaned(w) :
 
 class NLPclient:
   def __init__(self, core_nlp_version = '2018-10-05'):
-    from stanfordnlp.server import CoreNLPClient
+    from stanza.server import CoreNLPClient
     self.client = CoreNLPClient(start_server=False)
 
   def __enter__(self): return self
@@ -86,6 +86,6 @@ class NLPclient:
 
 def show_extract(infile):
   client = NLPclient()
-  with open(infile,'r') as f : text=f.read()
+  with ropen(infile) as f : text=f.read()
   for x in client.extract(text) :
     print(x)

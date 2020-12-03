@@ -6,6 +6,7 @@ from doctalk.think import *
 from doctalk.vis import *
 from doctalk.api import *
 from doctalk.pypro import NatTalker
+from doctalk.seek import *
 
 import pprint
 
@@ -125,7 +126,7 @@ def nrun(fname):
 
   N = NatTalker(from_file=docfile,
                 natscript=natscript)
-  with open(questfile, 'r') as f:
+  with ropen(questfile) as f:
     for q in f.readlines():
       N.natrun(q)
   # N.natrun("What deposits can be found in the Permian basin?")
@@ -187,6 +188,10 @@ def t2():
 def t3():
   fname = 'examples/const'
   reason_with(fname, query=True)
+
+def t4a():
+  fname = 'examples/logrank'
+  run_with(fname, query=True)
 
 def t4():
   fname = 'examples/logrank'
@@ -287,6 +292,21 @@ def t21():
   fname = 'examples/cybok'
   run_with(fname, query=True)
 
+def s1() :
+  fname = 'examples/bfr.txt'
+  s=Seeker(from_file=fname)
+  s.qa()
+
+def s2() :
+  fname = 'examples/tesla.txt'
+  s=Seeker(from_file=fname)
+  s.qa()
+
+def s3() :
+  fname = 'examples/const.txt'
+  s=Seeker(from_file=fname)
+  s.qa()
+
 def tgo()  :
   D=doc_dir
   files = sorted(glob.glob(D + "/*_quest.txt"))
@@ -294,10 +314,12 @@ def tgo()  :
     df=qf.replace("_quest.txt","")
     reason_with(df,query=True)
 
+
+
 import json
 def crunch() :
-  with open('doctalk/in.txt','r') as f:
-    with  open('doctalk/lemmas.json','w') as g :
+  with ropen('doctalk/in.txt') as f:
+    with  wopen('doctalk/lemmas.json') as g :
       d=dict()
       for l in f.readlines() :
         ws = l.split()
@@ -347,6 +369,21 @@ def api_test() :
   for ws in wss :
     print(' '.join(ws))
 
+def tt1():
+  fname = 'examples/bfr.txt'
+  t=Talker(from_file=fname)
+  #print(1,list(t.raw_dep_edge(0)))
+  #print(2,t.dep_tree(0))
+  #print(3,t.dep_term(0,quote=False))
+  #print(4,t.dep_tree(1))
+  #print(5, t.dep_tree(2))
+  #print(6,t.dep_term(2, quote=False))
+  #t.to_term_file()
+  t.to_json_file()
+
+def tt2():
+  dir_to_term_files('examples/',target='json')
+  dir_to_term_files('examples/', target='pro')
 
 if __name__== "__main__" :
   #nlp_test()
@@ -361,11 +398,12 @@ if __name__== "__main__" :
   #t12()
   #tftest()
   #otest()
-  #t0()
   #otest()
   #api_test()
   #clean_text_file('examples/peirce.txt')
-  clean_text_file('examples/cybok.txt')
+  #clean_text_file('examples/cybok.txt')
+  #tt2()
+  #t0()
   pass
 
 

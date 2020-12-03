@@ -6,6 +6,8 @@ import networkx as nx
 from nltk.corpus import words as wn_words
 import statistics as stat
 from collections import OrderedDict
+import os.path as osp
+import os
 #from pprint import pprint
 import json
 
@@ -13,6 +15,45 @@ from .nlp import *
 from .sim import *
 from .refiner import refine, ask_bert
 from .vis import pshow,gshow
+
+
+
+def pagerank(g) :
+  return nx.pagerank(g)
+
+def closeness(g) :
+  return nx.closeness_centrality(g)
+
+def betweenness(g) :
+  return nx.betweenness_centrality(g)
+
+def current_flow(g) :
+  u=g.to_undirected()
+  return nx.current_flow_betweenness_centrality(u)
+
+def hits(g) :
+  (hubs,auths)=nx.hits(g)
+  ranks=dict()
+  for x in g.nodes():
+    if isinstance(x,int) :
+      ranks[x]=hubs[x]
+    else :
+      ranks[x]=auths[x]
+  #return hubs
+  #return auths
+  return ranks
+
+rankers={
+  'hits':hits,
+  'pagerank':pagerank,
+  'closeness':closeness,
+  'betweenness':betweenness,
+  'current_flow':current_flow
+  }
+
+def rank_with(fname,g) :
+  f = rankers[fname]
+  return f(g)
 
 client = NLPclient()
 
@@ -34,7 +75,7 @@ def get_freqs() :
   global lemma_freqs
   if lemma_freqs : return lemma_freqs
   fname=my_path().replace('talk.py','lemmas.json')
-  with open(fname,'r') as f:
+  with ropen(fname) as f:
     lemma_freqs=json.load(f)
     return lemma_freqs
 
@@ -82,19 +123,19 @@ def tprint(*args) :
 def tload(infile) :
   ''' load a .txt file'''
   tprint('LOADING:',infile,'\n')
-  with open(infile, 'r') as f: text = f.read()
+  with ropen(infile) as f: text = f.read()
   return digest(text)
 
 def jload(infile) :
   ''' loads .json file, preprocessed from a .txt file'''
-  with open(infile, 'r') as f:
+  with ropen(infile) as f:
     res = json.load(f)
     return res
 
 def jsave(infile,outfile):
   '''preprocesses a .txt file to a .json file'''
   d=tload(infile)
-  with open(outfile,'w') as g:
+  with wopen(outfile) as g:
     json.dump(d,g,indent=0)
 
 def exists_file(fname) :
@@ -120,7 +161,7 @@ def get_quests(qs) :
   ''' decodes questions from list or file'''
   if not isinstance(qs,list) :
     qfname=qs
-    with open(qfname,'r') as f:
+    with ropen(qfname) as f:
       qs = list(l.strip() for l in f)
   return qs
 
@@ -390,7 +431,10 @@ def answer_quest(q,talker) :
   best = []
   if talker.params.pers and talker.params.with_answerer:
     d = {x: r for x, r in answerer.pr.items() if good_word(x)}
-    talker.pr = nx.pagerank(talker.g, personalization=d)
+
+    if talker.params.ranker=='pagerank':
+       talker.pr = nx.pagerank(talker.g, personalization=d)
+
 
   for (id, shared) in matches.items():
     sent = sent_data[id][SENT]
@@ -906,6 +950,79 @@ class Talker :
         trt="_".join([tt,r,tf])
         yield wt, trt, wf
 
+  # TODO: USE IT
+  def raw_dep_edge(self,id):
+      ''' dependency edge generator for sentence id'''
+      sent_data, l2occ = self.db
+      info = sent_data[id]
+      ws,ls,ts,_,deps,_=info
+      for dep in deps:
+        #print(dep)
+        f, r, t = dep
+        if t== -1 : #  and r=='ROOT' :
+          wt='SENT'
+          tt = 'TOP'
+        else :
+          wt = ls[t]
+          tt=ts[t]
+        tf=ts[f]
+        wf=ls[f]
+        #r=r.replace(':','*')
+        trt="_".join([tt,r,tf])
+        yield wt, trt, wf
+
+  def dep_tree(self,id) :
+      g=nx.DiGraph()
+      for f,r,t in self.raw_dep_edge(id) :
+        if t != '.' : g.add_edge(f,t)
+      if not 'SENT' in g :
+        sent_data, l2occ = self.db
+        tprint('BAD SENT:',sent_data[id])
+        return None
+
+      t0=next(iter(g['SENT']))
+      seen=set()
+      def walk(x) :
+         if x in seen : return [x]
+         seen.add(x)
+         xs=[y for y in iter(g[x])]
+         return ([x]+list(map(walk,xs)))
+      return walk(t0)
+
+  def dep_term(self,id,quote=False):
+    tree=self.dep_tree(id)
+    if not tree : return None
+    term = tree2term(tree,quote=quote)
+    return term
+
+
+  def to_term_file(self,quote=False):
+    fname=osp.basename(self.from_file)
+    fname=fname.split('.')[0]
+    file_name='temp/' + fname + ".pro"
+    sent_data, _ = self.db
+
+    with wopen(file_name) as outf:
+      for id in range(len(sent_data)) :
+         x=self.dep_term(id,quote=quote)
+         if not x : continue
+         term='term('+x+').'
+         print(term,file=outf)
+
+  def to_json_file(self):
+    fname = osp.basename(self.from_file)
+    fname = fname.split('.')[0]
+    file_name = 'temp/' + fname + ".json"
+    sent_data, _ = self.db
+    trees=[]
+    for id in range(len(sent_data)):
+        x = self.dep_tree(id)
+        if not x: continue
+        trees.append(x)
+    with wopen(file_name) as g:
+      json.dump(trees, g, indent=1)
+
+
 
   def to_edges_in(self,id,sd):
     '''yields edges from dependency structure of sentence id'''
@@ -957,13 +1074,18 @@ class Talker :
         else:
           g.add_edge(o, s)
 
-    if personalization == None and self.params.pers_idf :
+    if personalization == None and self.params.pers_idf and self.params.ranker=='pagerank':
       personalization=self.pers_from_freq(get_freqs())
+      pr = nx.pagerank(g, personalization=personalization)
+    else:
+      pr = rank_with(self.params.ranker,g)
 
-    pr = nx.pagerank(g, personalization=personalization)
+
+
     if self.params.use_line_graph and g.number_of_edges()<20000 :
         lg=nx.line_graph(g)
-        lpr= nx.pagerank(lg)
+        #lpr= nx.pagerank(lg)
+        lpr=rank_with(self.params.ranker,lg)
         for xy,r in lpr.items() :
           x,y=xy
           if isinstance(x,str) and isinstance(y,str):
@@ -999,7 +1121,7 @@ class Talker :
     ''' generates a Prolog representation of a document's content'''
     if not self.from_file : return
     fname=self.from_file[:-4]
-    with open(fname+".pro",'w') as f :
+    with wopen(fname+".pro") as f :
       sent_data,l2occ=self.db
       f.write('% SENTENCES: \n')
       for i,data in enumerate(sent_data) :
@@ -1023,17 +1145,26 @@ class Talker :
     from transformers import pipeline
     #ranks=[a[2] for a in answers]
     #assert ranks==sorted(ranks,reverse=True)
-    ws=[" ".join(a[1]) for a in answers]
-    lens=[len(a[1]) for a in answers]
+    xss=[a[1] for a in answers]
+
+    lens=[len(xs) for xs in xss]
     token_count = sum(lens)
 
+    ws = [" ".join(xs) for xs in xss]
     txt=" ".join(ws)
-    r=ask_bert(txt,q)
 
-    print('\n==============>BERT SHORT ANSWER:\n',
-          'sentences: ',len(lens),
-          #'sentence lengths:',lens,
-          'tokens:',token_count,':','\n',r+'\n')
+    r = ask_bert(txt, q)
+
+    if not r :
+      print('NO ANSWER from BERT.\n')
+      return
+
+    print('\n==============>ASKING BERT WITH:\n',
+          'sentences: ', len(lens),
+          ', sentence lengths:', lens,
+          ',tokens:', token_count,'\n')
+
+    print("==============>BERT's SHORT ANSWER:\n",r+'\n')
 
 
   def distill(self,q,answers,answerer):
@@ -1070,7 +1201,7 @@ class Talker :
     '''
     saves summary as plain text for ROUGE evaluation
     '''
-    with open(out_file,'w') as g:
+    with wopen(out_file) as g:
       for _, _, ws in self.get_summary():
         print(nice(ws),file=g)
 
@@ -1078,7 +1209,7 @@ class Talker :
     '''
       saves keyphrases one per line for ROUGE evaluation
     '''
-    with open(out_file,'w') as g:
+    with wopen(out_file) as g:
       for w in self.get_keys() :
         print(w,file=g)
 
@@ -1129,7 +1260,8 @@ class Talker :
     size = self.params.subgraph_size
     show = self.params.show_pics
     if size > 0:
-      pr = nx.pagerank(g)
+      #pr = nx.pagerank(g)
+      pr=rank_with(self.params.ranker,g)
       best = set(take(size, [x[0] for x in rank_sort(pr)]))
       g = g.subgraph(best)
     fname = file_name[:-4] + "_svo.gv"
@@ -1137,6 +1269,44 @@ class Talker :
 
 
 # helpers
+
+# creates dep. tree database files from directory
+# to be used for QA, possibly via ML tools
+def dir_to_term_files(dir,target='json',quote=False):
+  if not target in ['json','pro'] :
+    raise "bad target in: dir_to_term_files"
+  fs=os.listdir(dir)
+  for fname in fs:
+    suf=fname.split('.')[1]
+
+    if suf == 'txt' : # and '_quest.' not in fname:
+      fname=dir+fname
+      t=Talker(from_file=fname)
+      print(target + ' file from:',t.from_file)
+      if target=='json' :
+        t.to_json_file()
+      elif target=='pro':
+        t.to_term_file(quote=quote)
+
+
+def tree2term(term, quote=True):
+    buf = []
+    def walk(t):
+      f=t[0]
+      xs=t[1:]
+      f = f.replace("'", '').lower()
+      if quote or not f.isalpha():
+        f = "'" + f + "'"
+      buf.append(f)
+      if xs:
+        buf.append('(')
+        for i, x in enumerate(xs):
+          if i > 0: buf.append(',')
+          walk(x)
+        buf.append(')')
+    walk(term)
+    s = ''.join(buf)
+    return s
 
 def nice_keys(keywords):
     '''
@@ -1178,6 +1348,7 @@ def normalize_sent(r,sent_len,avg_len):
   '''
   if not r:
     r=0
+  #@@@@ if sent_len >= 64 : return 0
   if sent_len > 2*avg_len or sent_len < min(5,avg_len/4) :
     return 0
   factor =  1/(1+abs(sent_len-avg_len)+sent_len)
@@ -1221,11 +1392,11 @@ def pdf2txt(fname) :
   clean_text_file(fname+".txt")
 
 def file2string(fname):
-  with open(fname, 'r') as f:
+  with ropen(fname) as f:
     return f.read()
 
 def string2file(text,fname) :
-  with open(fname,'w') as g:
+  with wopen(fname) as g:
     g.write(text)
 
 def clean_text_file(fname) :
