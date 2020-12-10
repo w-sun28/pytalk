@@ -27,9 +27,15 @@ def closeness(g) :
 def betweenness(g) :
   return nx.betweenness_centrality(g)
 
+def subgraph_centrality(g):
+  u=g.to_undirected()
+  return nx.subgraph_centrality(u)
+
 def current_flow(g) :
   u=g.to_undirected()
-  return nx.current_flow_betweenness_centrality(u)
+  if(nx.is_connected(u)): # attempt to fix error
+    return nx.current_flow_betweenness_centrality(u)
+  return {}
 
 def hits(g) :
   (hubs,auths)=nx.hits(g)
@@ -48,7 +54,8 @@ rankers={
   'pagerank':pagerank,
   'closeness':closeness,
   'betweenness':betweenness,
-  'current_flow':current_flow
+  'current_flow':current_flow,
+  'subgraph_centrality':subgraph_centrality
   }
 
 def rank_with(fname,g) :
